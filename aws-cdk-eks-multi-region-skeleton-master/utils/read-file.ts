@@ -12,7 +12,7 @@ export function readYamlFromDir(dir: string, cluster: eks.Cluster) {
       if (data != undefined) {
         let i = 0;
         yaml.loadAll(data).forEach((item) => {
-          const resource = cluster.addManifest(file.substr(0, file.length - 5) + i, item);
+          const resource = cluster.addManifest(file.substr(0, file.length - 5) + i, item as Record<string, any>);
           // @ts-ignore
           if (previousResource != undefined) {
             resource.node.addDependency(previousResource)
