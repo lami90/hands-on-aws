@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
-import * as eks from '@aws-cdk/aws-eks';
-import {KubernetesManifest} from "@aws-cdk/aws-eks/lib/k8s-manifest";
+import * as eks from 'aws-cdk-lib/aws-eks';
+import { KubernetesManifest } from "aws-cdk-lib/aws-eks/lib/k8s-manifest";
 
 
 export function readYamlFromDir(dir: string, cluster: eks.Cluster) {
