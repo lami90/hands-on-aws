@@ -20,7 +20,7 @@ export class ClusterStack extends cdk.Stack {
     const cluster = new eks.Cluster(this, 'hsseo-test-eks-cluster', {
       clusterName: `hsseo-test-eks-cluster`,
       mastersRole: clusterAdmin,
-      version: eks.KubernetesVersion.V1_21,
+      version: eks.KubernetesVersion.V1_24,
       defaultCapacity: 1
     });
 
