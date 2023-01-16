@@ -6,63 +6,54 @@ import { PhysicalName } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 export interface EksProps extends cdk.StackProps {
-  cluster: eks.Cluster
+    cluster: eks.Cluster
 }
 
 export interface ClusterProps extends cdk.StackProps {
-  onDemandInstanceType: string,
-  primaryRegion: string
+    onDemandInstanceType: string,
+    primaryRegion: string
 }
 
 export interface CicdProps extends cdk.StackProps {
-  firstRegionCluster: eks.Cluster,
-  secondRegionCluster: eks.Cluster,
-  firstRegionRole: iam.Role,
-  secondRegionRole: iam.Role,
-  firstRegion: string,
-  secondRegion: string
+    primaryRegionCluster: eks.Cluster,
+    primaryRegionRole: iam.Role,
+    primaryRegion: string,
 }
 
 export class ClusterStack extends cdk.Stack {
 
-  public readonly cluster: eks.Cluster;
-  public readonly firstRegionRole: iam.Role;
-  public readonly secondRegionRole: iam.Role;
+    public readonly cluster: eks.Cluster;
+    public readonly regionRole: iam.Role;
 
-  constructor(scope: Construct, id: string, props: ClusterProps) {
-    super(scope, id, props);
+    constructor(scope: Construct, id: string, props: ClusterProps) {
+        super(scope, id, props);
 
-    const clusterAdmin = new iam.Role(this, 'AdminRole', {
-      assumedBy: new iam.AccountRootPrincipal()
-      });
+        const clusterAdmin = new iam.Role(this, 'AdminRole', {
+            assumedBy: new iam.AccountRootPrincipal()
+        });
 
-    const cluster = new eks.Cluster(this, 'demoeks--cluster', {
-        clusterName: `demoeks`,
-        mastersRole: clusterAdmin,
-        version: eks.KubernetesVersion.V1_21,
-        defaultCapacity: 2,
-        defaultCapacityInstance: new ec2.InstanceType(props.onDemandInstanceType)
-    });
+        const cluster = new eks.Cluster(this, 'demoeks--cluster', {
+            clusterName: `demoeks`,
+            mastersRole: clusterAdmin,
+            version: eks.KubernetesVersion.V1_24,
+            defaultCapacity: 2,
+            defaultCapacityInstance: new ec2.InstanceType(props.onDemandInstanceType)
+        });
 
-    this.cluster = cluster;
+        this.cluster = cluster;
 
-    if (cdk.Stack.of(this).region==props.primaryRegion) {
-        this.firstRegionRole = createDeployRole(this, `for-1st-region`, cluster);
+        if (cdk.Stack.of(this).region == props.primaryRegion) {
+            this.regionRole = createDeployRole(this, `for-1st-region`, cluster);
+        }
     }
-    else {
-        this.secondRegionRole = createDeployRole(this, `for-2nd-region`, cluster);
-    }
-  }
 }
 
 function createDeployRole(scope: Construct, id: string, cluster: eks.Cluster): iam.Role {
-  const role = new iam.Role(scope, id, {
-    roleName: PhysicalName.GENERATE_IF_NEEDED,
-    assumedBy: new iam.AccountRootPrincipal()
-  });
-  cluster.awsAuth.addMastersRole(role);
+    const role = new iam.Role(scope, id, {
+        roleName: PhysicalName.GENERATE_IF_NEEDED,
+        assumedBy: new iam.AccountRootPrincipal()
+    });
+    cluster.awsAuth.addMastersRole(role);
 
-  return role;
+    return role;
 }
-
-

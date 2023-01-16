@@ -17,63 +17,48 @@ export class CicdStack extends cdk.Stack {
         const helloPyRepo = new codecommit.Repository(this, 'hello-py-for-demogo', {
             repositoryName: `hello-py-${cdk.Stack.of(this).region}`
         });
-        
+
         new cdk.CfnOutput(this, `codecommit-uri`, {
             exportName: 'CodeCommitURL',
             value: helloPyRepo.repositoryCloneUrlHttp
         });
-        const ecrForMainRegion = new ecr.Repository(this, `ecr-for-hello-py`,{
-            removalPolicy: RemovalPolicy.DESTROY});
+        const ecrForMainRegion = new ecr.Repository(this, `ecr-for-hello-py`, {
+            removalPolicy: RemovalPolicy.DESTROY
+        });
 
         const buildForECR = codeToECRspec(this, ecrForMainRegion.repositoryUri);
         ecrForMainRegion.grantPullPush(buildForECR.role!);
-        
-        const deployToMainCluster = deployToEKSspec(this, props.firstRegion, props.firstRegionCluster, ecrForMainRegion, props.firstRegionRole);
-        const deployTo2ndCluster = deployToEKSspec(this, props.secondRegion, props.secondRegionCluster, ecrForMainRegion, props.secondRegionRole);
 
+        const deployToMainCluster = deployToEKSspec(this, props.primaryRegion, props.primaryRegionCluster, ecrForMainRegion, props.primaryRegionRole);
 
         const sourceOutput = new codepipeline.Artifact();
 
         new codepipeline.Pipeline(this, 'multi-region-eks-dep', {
-                    stages: [ {
-                            stageName: 'Source',
-                            actions: [ new pipelineAction.CodeCommitSourceAction({
-                                    actionName: 'CatchSourcefromCode',
-                                    repository: helloPyRepo,
-                                    output: sourceOutput,
-                                })]
-                        },{
-                            stageName: 'Build',
-                            actions: [ new pipelineAction.CodeBuildAction({
-                                actionName: 'BuildAndPushtoECR',
-                                input: sourceOutput,
-                                project: buildForECR
-                            })]
-                        },
-                        {
-                            stageName: 'DeployToMainEKScluster',
-                            actions: [ new pipelineAction.CodeBuildAction({
-                                actionName: 'DeployToMainEKScluster',
-                                input: sourceOutput,
-                                project: deployToMainCluster
-                            })]
-                        },{
-                            stageName: 'ApproveToDeployTo2ndRegion',
-                            actions: [ new pipelineAction.ManualApprovalAction({
-                                    actionName: 'ApproveToDeployTo2ndRegion'
-                            })]
-                        },
-                        {
-                            stageName: 'DeployTo2ndRegionCluster',
-                            actions: [ new pipelineAction.CodeBuildAction({
-                                actionName: 'DeployTo2ndRegionCluster',
-                                input: sourceOutput,
-                                project: deployTo2ndCluster
-                            })]
-                        }
-                        
-                    ]
-                });
+            stages: [{
+                stageName: 'Source',
+                actions: [new pipelineAction.CodeCommitSourceAction({
+                    actionName: 'CatchSourcefromCode',
+                    repository: helloPyRepo,
+                    output: sourceOutput,
+                })]
+            }, {
+                stageName: 'Build',
+                actions: [new pipelineAction.CodeBuildAction({
+                    actionName: 'BuildAndPushtoECR',
+                    input: sourceOutput,
+                    project: buildForECR
+                })]
+            },
+                {
+                    stageName: 'DeployToMainEKScluster',
+                    actions: [new pipelineAction.CodeBuildAction({
+                        actionName: 'DeployToMainEKScluster',
+                        input: sourceOutput,
+                        project: deployToMainCluster
+                    })]
+                }
+            ]
+        });
 
     }
 }
