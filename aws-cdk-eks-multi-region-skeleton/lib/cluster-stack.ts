@@ -36,7 +36,7 @@ export class ClusterStack extends cdk.Stack {
             clusterName: `demoeks`,
             mastersRole: clusterAdmin,
             version: eks.KubernetesVersion.V1_24,
-            defaultCapacity: 2,
+            defaultCapacity: 3,
             defaultCapacityInstance: new ec2.InstanceType(props.onDemandInstanceType)
         });
 
