@@ -25,9 +25,14 @@ export class KafkaStack extends cdk.Stack {
             clusterName: 'KafkaCluster',
             kafkaVersion: '3.3.1',
             numberOfBrokerNodes: 2,
-            encryptionInfo: {
-                encryptionInTransit: {
-                    clientBroker: 'TLS_PLAINTEXT',
+            clientAuthentication: {
+                sasl: {
+                    scram: {
+                        enabled: true
+                    }
+                },
+                unauthenticated: {
+                    enabled: false
                 }
             }
         });
