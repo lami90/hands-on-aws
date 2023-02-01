@@ -1,23 +1,21 @@
 import * as cdk from 'aws-cdk-lib';
-import * as msk from 'aws-cdk-lib/aws-msk';
-import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import { Construct } from 'constructs';
-import { VpcStack } from './vpc-stack';
 
 export class SecretsManagerStack extends cdk.Stack {
-    public readonly ksm: secretsmanager.Secret;
+
+    public readonly key: kms.Key;
     public readonly kafkaSecret: secretsmanager.Secret;
 
     constructor(scope: Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
-        const key = new kms.Key(this, 'my-kms-key', {
+        this.key = new kms.Key(this, 'my-kms-key', {
             removalPolicy: cdk.RemovalPolicy.DESTROY,
             pendingWindow: cdk.Duration.days(7),
-            alias: 'kafka/mykey',
+            alias: 'kafka/poc',
             description: 'KMS key for Kafka',
             enableKeyRotation: false,
         });
@@ -31,7 +29,7 @@ export class SecretsManagerStack extends cdk.Stack {
                     }
                 )
             ),
-            encryptionKey: key,
+            encryptionKey: this.key,
         });
 
         new iam.User(this, 'KafkaUser', {

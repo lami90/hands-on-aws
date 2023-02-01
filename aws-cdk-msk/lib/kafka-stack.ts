@@ -3,11 +3,12 @@ import * as msk from 'aws-cdk-lib/aws-msk';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 import { VpcStack } from './vpc-stack';
+import { SecretsManagerStack } from './secretsmanager-stack';
 
 export class KafkaStack extends cdk.Stack {
     public readonly kafkaCluster: msk.CfnCluster;
 
-    constructor(vpcStack: VpcStack, scope: Construct, id: string, props?: cdk.StackProps) {
+    constructor(vpcStack: VpcStack, secretsmanager: SecretsManagerStack, scope: Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
         this.kafkaCluster = new msk.CfnCluster(this, 'kafkaCluster', {
             brokerNodeGroupInfo: {
@@ -35,6 +36,12 @@ export class KafkaStack extends cdk.Stack {
                     enabled: false
                 }
             }
+            // add this to test the error
+            // encryptionInfo: {
+            //     encryptionAtRest: {
+            //         dataVolumeKmsKeyId: secretsmanager.key.keyId
+            //     }
+            // }
         });
     }
 }
