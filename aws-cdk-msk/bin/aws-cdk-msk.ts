@@ -6,6 +6,7 @@ import { KafkaStack } from '../lib/kafka-stack';
 import { Ec2BastionStack } from '../lib/ec2-bastion';
 import { SecretsManagerStack } from '../lib/secretsmanager-stack';
 import { KafkaSecretsStack } from '../lib/kafka-secrets-stack';
+import {KafkaStorageAutoScalingStack} from "../lib/kafka-storage-autoscaling-stack";
 
 const app = new cdk.App();
 
@@ -22,3 +23,6 @@ kafkaStack.dependencies.push(secretsManagerStack);
 const kafkaSecretsStack = new KafkaSecretsStack(kafkaStack, secretsManagerStack, app, 'KafkaSecretsStack');
 kafkaSecretsStack.dependencies.push(kafkaStack);
 kafkaSecretsStack.dependencies.push(secretsManagerStack);
+
+const kafkaStorageAutoScalingStack = new KafkaStorageAutoScalingStack(kafkaStack, app, 'KafkaStorageAutoScalingStack');
+kafkaStorageAutoScalingStack.dependencies.push(kafkaStack);
