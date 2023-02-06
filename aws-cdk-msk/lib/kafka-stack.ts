@@ -35,13 +35,19 @@ export class KafkaStack extends cdk.Stack {
                 unauthenticated: {
                     enabled: false
                 }
-            }
-            // add this to test the error
-            // encryptionInfo: {
-            //     encryptionAtRest: {
-            //         dataVolumeKmsKeyId: secretsmanager.key.keyId
-            //     }
-            // }
+            },
+            enhancedMonitoring: 'PER_TOPIC_PER_PARTITION',
+            openMonitoring: {
+                prometheus: {
+                    jmxExporter: {
+                        enabledInBroker: true
+                    },
+                    nodeExporter: {
+                        enabledInBroker: true
+                    }
+                }
+            },
+
         });
     }
 }

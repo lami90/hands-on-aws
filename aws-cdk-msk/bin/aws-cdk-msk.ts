@@ -6,7 +6,7 @@ import { KafkaStack } from '../lib/kafka-stack';
 import { Ec2BastionStack } from '../lib/ec2-bastion';
 import { SecretsManagerStack } from '../lib/secretsmanager-stack';
 import { KafkaSecretsStack } from '../lib/kafka-secrets-stack';
-import {KafkaStorageAutoScalingStack} from "../lib/kafka-storage-autoscaling-stack";
+import { KafkaStorageAutoScalingStack } from '../lib/kafka-storage-autoscaling-stack';
 
 const app = new cdk.App();
 
