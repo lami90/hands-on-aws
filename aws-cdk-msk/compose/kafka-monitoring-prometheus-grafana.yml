@@ -16,3 +16,12 @@ services:
       - "3000:3000"
     volumes:
       - ./grafana/provisioning/:/etc/grafana/provisioning/
+
+  kafka-lag-exporter:
+    image: lightbend/kafka-lag-exporter:0.5.5
+    hostname: kafka-lag-exporter
+    restart: always
+    ports:
+      - "9999:9999"
+    volumes:
+      - ./kafka-lag-exporter/:/opt/docker/conf/

@@ -16,3 +16,8 @@ scrape_configs:
     static_configs:
       - targets:
           - 'NODE_EXPORTER_HOST:PORT'
+
+  - job_name: 'kafka-lag-exporter'
+    static_configs:
+      - targets:
+          - 'kafka-lag-exporter:9999'
