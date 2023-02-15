@@ -8,6 +8,7 @@ import { SecretsManagerStack } from '../lib/secretsmanager-stack';
 import { KafkaSecretsStack } from '../lib/kafka-secrets-stack';
 import { KafkaStorageAutoScalingStack } from '../lib/kafka-storage-autoscaling-stack';
 import { KafkaMonitoringStack } from '../lib/kafka-monitoring-stack';
+import { FargateStack } from '../lib/fargate-stack';
 
 const app = new cdk.App();
 
@@ -30,3 +31,8 @@ kafkaStorageAutoScalingStack.dependencies.push(kafkaStack);
 
 const kafkaMonitoringStack = new KafkaMonitoringStack(vpcStack, app, 'KafkaMonitoringStack');
 kafkaMonitoringStack.dependencies.push(vpcStack);
+
+const fargateStack = new FargateStack(vpcStack, app, 'FargateStack');
+fargateStack.dependencies.push(vpcStack);
+fargateStack.dependencies.push(secretsManagerStack);
+fargateStack.dependencies.push(kafkaStack);
