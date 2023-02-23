@@ -10,10 +10,14 @@ import { InstanceClass, InstanceSize } from 'aws-cdk-lib/aws-ec2';
 import { Effect } from 'aws-cdk-lib/aws-iam';
 
 export class FargateStack extends cdk.Stack {
-    private groupId = "consumers";
 
     constructor(vpcStack: VpcStack, scope: Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
+
+        let consumerGroupId = new CfnParameter(this, "consumerGroupId", {
+            type: "String",
+            description: "Kafka consumer group",
+        });
 
         let bootstrapAddress = new CfnParameter(this, "bootstrapAddress", {
             type: "String",
@@ -47,7 +51,7 @@ export class FargateStack extends cdk.Stack {
             image: ecs.ContainerImage.fromDockerImageAsset(image),
             logging: ecs.LogDrivers.awsLogs({streamPrefix: 'KafkaConsumer'}),
             environment: {
-                'GROUP_ID': this.groupId,
+                'GROUP_ID': consumerGroupId.valueAsString,
                 'BOOTSTRAP_ADDRESS': bootstrapAddress.valueAsString,
                 'REGION': this.region,
                 'TOPIC_NAME': topicName.valueAsString
