@@ -27,7 +27,7 @@ export class KafkaStack extends cdk.Stack {
                 'socket.send.buffer.bytes=102400\n' +
                 'unclean.leader.election.enable=true\n' +
                 'zookeeper.session.timeout.ms=18000\n' +
-                'allow.everyone.if.no.acl.found=false\n',
+                'allow.everyone.if.no.acl.found=true\n',
             kafkaVersionsList: ['3.3.1'],
 
         });
@@ -38,7 +38,7 @@ export class KafkaStack extends cdk.Stack {
             numberOfBrokerNodes: 3,
             configurationInfo: {
                 arn: config.attrArn,
-                revision: 10
+                revision: 1
             },
             brokerNodeGroupInfo: {
                 securityGroups: [vpcStack.kafkaSecurityGroup.securityGroupId],
@@ -48,14 +48,14 @@ export class KafkaStack extends cdk.Stack {
                 instanceType: 'kafka.t3.small',
                 storageInfo: {
                     ebsStorageInfo: {
-                        volumeSize: 5
+                        volumeSize: 100
                     }
                 },
-                connectivityInfo: {
-                    publicAccess: {
-                        type: 'SERVICE_PROVIDED_EIPS'
-                    }
-                }
+                // connectivityInfo: {
+                //     publicAccess: {
+                //         type: 'SERVICE_PROVIDED_EIPS'
+                //     }
+                // }
             },
             clientAuthentication: {
                 sasl: {

@@ -15,11 +15,9 @@ const secretsManagerStack = new SecretsManagerStack(app, `${prefix}-secretsmanag
 
 const kafkaStack = new KafkaStack(vpcStack, secretsManagerStack, app, `${prefix}-kafka-stack`);
 kafkaStack.dependencies.push(vpcStack);
-kafkaStack.dependencies.push(secretsManagerStack);
 
 const kafkaSecretsStack = new KafkaSecretsStack(kafkaStack, secretsManagerStack, app, `${prefix}-kafka-secrets-mapping-stack`);
 kafkaSecretsStack.dependencies.push(kafkaStack);
-
 kafkaSecretsStack.dependencies.push(secretsManagerStack);
 
 const ec2BastionStack = new Ec2BastionStack(vpcStack, app, `${prefix}-ec2-bastion-stack`);
