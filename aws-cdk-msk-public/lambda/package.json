@@ -1,0 +1,12 @@
+{
+  "name": "init-handler",
+  "version": "1.0.0",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.111",
+    "@types/cfn-response": "^1.0.5"
+  },
+  "dependencies": {
+    "kafkajs": "^2.2.4",
+    "cfn-response": "^1.0.1"
+  }
+}

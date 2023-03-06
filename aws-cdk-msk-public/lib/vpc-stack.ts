@@ -8,6 +8,8 @@ export class VpcStack extends cdk.Stack {
     public readonly kafkaSecurityGroup: ec2.SecurityGroup;
     public readonly ec2BastionSecurityGroup: ec2.SecurityGroup;
 
+    public readonly lambdaSecurityGroup: ec2.SecurityGroup;
+
     constructor(scope: Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
@@ -45,6 +47,13 @@ export class VpcStack extends cdk.Stack {
         });
         this.ec2BastionSecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(22), 'Allow SSH from anywhere');
 
+        this.lambdaSecurityGroup = new ec2.SecurityGroup(this, 'lambdaSecurityGroup', {
+            securityGroupName: 'lambdaSecurityGroup',
+            vpc: this.vpc,
+            allowAllOutbound: true
+        });
+
         this.kafkaSecurityGroup.connections.allowFrom(this.ec2BastionSecurityGroup, ec2.Port.allTraffic(), 'allowFromEc2BastionToKafka');
+        this.kafkaSecurityGroup.connections.allowFrom(this.lambdaSecurityGroup, ec2.Port.allTraffic(), 'allowFromLambdaToKafka');
     }
 }
