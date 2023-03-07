@@ -6,7 +6,7 @@ import { KafkaStack } from '../lib/kafka-stack';
 import { SecretsManagerStack } from '../lib/secretsmanager-stack';
 import { KafkaSecretsStack } from '../lib/kafka-secrets-stack';
 import { Ec2BastionStack } from '../lib/ec2-bastion';
-import { LambdaInitStack } from '../lib/lambda-init-stack';
+import { LambdaKafkaAdminStack } from '../lib/lambda-kafka-admin-stack';
 
 const app = new cdk.App();
 
@@ -21,9 +21,9 @@ const kafkaSecretsStack = new KafkaSecretsStack(kafkaStack, secretsManagerStack,
 kafkaSecretsStack.dependencies.push(kafkaStack);
 kafkaSecretsStack.dependencies.push(secretsManagerStack);
 
-const lambdaInitStack = new LambdaInitStack(vpcStack, kafkaStack, app, `${prefix}-lambda-init-stack`);
-lambdaInitStack.dependencies.push(vpcStack);
-lambdaInitStack.dependencies.push(kafkaStack);
+const lambdaKafkaAdminStack = new LambdaKafkaAdminStack(vpcStack, kafkaStack, app, `${prefix}-lambda-kafka-admin-stack`);
+lambdaKafkaAdminStack.dependencies.push(vpcStack);
+lambdaKafkaAdminStack.dependencies.push(kafkaStack);
 
 const ec2BastionStack = new Ec2BastionStack(vpcStack, app, `${prefix}-ec2-bastion-stack`);
 ec2BastionStack.dependencies.push(vpcStack);
