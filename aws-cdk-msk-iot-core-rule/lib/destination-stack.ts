@@ -6,6 +6,8 @@ import { Role } from 'aws-cdk-lib/aws-iam';
 import { CfnParameter } from 'aws-cdk-lib';
 
 export class DestinationStack extends cdk.Stack {
+    public ruleDestination: iot.CfnTopicRuleDestination;
+
     constructor(ruleSecurityGroup: SecurityGroup, ruleRole: Role, scope: Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
@@ -19,7 +21,7 @@ export class DestinationStack extends cdk.Stack {
             description: "Subnet Ids for MSK VPC"
         }).valueAsList;
 
-        const ruleDestination = new iot.CfnTopicRuleDestination(this, 'RuleDestination', {
+        this.ruleDestination = new iot.CfnTopicRuleDestination(this, 'RuleDestination', {
             vpcProperties: {
                 subnetIds: mskSubnetIds,
                 securityGroups: [ruleSecurityGroup.securityGroupId],
