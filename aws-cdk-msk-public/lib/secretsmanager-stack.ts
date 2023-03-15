@@ -3,7 +3,7 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import * as kms from 'aws-cdk-lib/aws-kms';
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import { Construct } from 'constructs';
-import {CfnParameter} from "aws-cdk-lib";
+import { CfnParameter } from 'aws-cdk-lib';
 
 export class SecretsManagerStack extends cdk.Stack {
 
@@ -20,7 +20,7 @@ export class SecretsManagerStack extends cdk.Stack {
 
         let password = new CfnParameter(this, "password", {
             type: "String",
-            description: "Kafka topic name"
+            description: "password for Kafka"
         });
 
         this.key = new kms.Key(this, 'public-msk-kms-key', {

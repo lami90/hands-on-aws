@@ -24,7 +24,7 @@ export class LambdaKafkaAdminStack extends cdk.Stack {
 
         let password = new CfnParameter(this, "password", {
             type: "String",
-            description: "Kafka topic name"
+            description: "password for Kafka"
         }).valueAsString;
 
         // Lambda function to support cloudformation custom resource to create kafka topics.
