@@ -31,6 +31,9 @@ export class KafkaStack extends cdk.Stack {
                 sasl: {
                     scram: {
                         enabled: true
+                    },
+                    iam: {
+                        enabled: true
                     }
                 },
                 unauthenticated: {
