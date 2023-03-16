@@ -36,8 +36,9 @@ export class VpcStack extends cdk.Stack {
             vpc: this.vpc,
             allowAllOutbound: true,
         });
-        this.kafkaSecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(9096), 'Allow Kafka from anywhere');
-        this.kafkaSecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(9196), 'Allow Kafka from anywhere');
+        this.kafkaSecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(9096), 'Allow Kafka private endpoint for SASL/SCRAM from anywhere');
+        this.kafkaSecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(9098), 'Allow Kafka private endpoint for IAM from anywhere');
+        this.kafkaSecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(9196), 'Allow Kafka public endpoint for SASL/SCRAM from anywhere');
         this.kafkaSecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(2181), 'Allow Zookeeper from anywhere');
 
         this.ec2BastionSecurityGroup = new ec2.SecurityGroup(this, 'ec2BastionSecurityGroup', {
